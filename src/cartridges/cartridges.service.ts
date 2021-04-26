@@ -62,16 +62,5 @@ export class CartridgesService{
         return this.result;
     }
 
-    getHelp(){
-        let html: Array<string> = [];
-        html.push("<h1>Hello World</h1>");
-        html.push("<div>");
-        html.push("Now this is amazing. We can finish the entire excercise in ");
-        html.push("the shortest possible time. <br/>");
-        html.push("I really really like it. Wow, simply amazing");
-        html.push("</div>");
-        
-        return html.join('\n');        
-       
-    }
+    
 }
