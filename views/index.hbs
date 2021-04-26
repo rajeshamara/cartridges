@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cartridges Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        body{
+            font-family: "calibri";
+        }
+        input {
+            width:50px;
+        }
+        table{
+            border: 1px solid black;
+        }
+        .dataelem{
+            border: 1px solid red;
+        }
+        
+        #container{
+            display: flex;
+        }
+        .cartridge{
+            width:800px;
+        }
+        #data{            
+            cursor: pointer;
+            padding: 2px 2px 2px 2px;
+        }
+        #cartridges{
+            width: 90%;
+        }
+        #numcartridges{
+            font-weight: bold;
+            font-size: large;
+        }
+        textarea{
+            width:100%;
+            height:700px;
+        }
+        .canvas{
+            width:200px;
+            height:200px;
+            background-color:yellow;         
+        }
+        .endcell {
+            background-color: green;
+        }
+        .ligand{border: 1px solid black;}
+        .ligand.l1 {background-color: lightgreen;}
+        .ligand.l2 {background-color: cyan;}
+        .ligand.l3 {background-color: rgb(255, 137, 137);}
+        .ligand.l4 {background-color: orange;}
+        .ligand.l5 {background-color: rgb(140, 141, 52);}
+        .ligand.l6 {background-color: rgb(109, 121, 143);}
+        .ligand.l7 {background-color: rgb(134, 125, 116);}
+        .ligand.header{font-weight: bold; font-size: larger;}
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        let result = {};
+        let data = {value:0, name:""};
+        let g_cartridges = [];
+        let ligandNames = [];
+        let input = {};
+        $( document ).ready(function() {LoadData();});
+
+        function InitializeData()
+        {
+            data = {value:0, name:""};
+            g_cartridges = [];
+            ligandNames = [];
+        }
+
+        function LoadData()
+        {
+            $("#ligands").val(3);
+            $("#analytes").val(30);
+            $("#rows").val(6);
+            $("#cols").val(8);           
+        }
+
+        function Generate()
+        {
+            InitializeData();
+            input = {
+                ligands : $("#ligands").val(),
+                analytes : $("#analytes").val(),
+                rows :  $("#rows").val(),
+                cols : $("#cols").val()
+            };
+            $.post("cartridges", input, function(data, status){
+                result = data;
+                $("#numcartridges").text(result.cartridges);
+                DisplayCartidges();
+            });
+        }
+
+        function DisplayCartidges()
+        {
+            g_cartridges = new Array(result.cartridges * input.rows * input.cols).fill(null);
+            let totalCols = result.cartridges * input.cols;
+            // Populate Ligands
+            for(var i=0; i<result.ligands.length; i++)
+            {
+                let startIndex = result.ligands[i].start;
+                let endIndex = result.ligands[i].end;
+
+                for(var index = startIndex; index <= endIndex; index++){
+                    ligandNames.push(result.ligands[i].name);
+                }
+
+                // populate the analytes
+                var value = 1;
+                for(var row=0; row < input.rows; row++)
+                {
+                    for(var col=startIndex; col <=endIndex; col++)
+                    {
+                        var index = row * totalCols + col;
+                        g_cartridges[index] = {value : value, name : result.ligands[i].name};
+                        value++;
+                        if(value > input.analytes)
+                            break;
+                    }
+                    if(value > input.analytes)
+                        break;
+                }
+            }            
+            GenerateCartridges();            
+        }
+
+        function GenerateCartridges()
+        {
+            let html  = [];
+            let cartridgesPerRow = 4;
+            let rows = Math.ceil(result.cartridges/4)
+            html.push(GenerateBaseTable(rows,cartridgesPerRow));
+            $("#cartridges").html(html);
+        }
+
+        function GenerateBaseTable(rows, cols)
+        {
+            let html = [];
+            html.push("<div class=\"cartridge\"><table>");
+            let cartridgeId = 0;
+            let cellValue = '<div class="canvas">';            
+            for(var row=0; row<rows; row++){
+                html.push("<tr>");
+                for(var col=0; col<cols; col++){
+                    let cid = "c" + cartridgeId;
+                    html.push("<td " + "id='" + cid + "'" + ">" + GenerateCartridge(cartridgeId) + "</td>");
+                    cartridgeId++;
+                    if(cartridgeId >= result.cartridges)
+                        break;
+                }
+                html.push("</tr>");
+            }
+            html.push("</table></div>");
+            return html.join('\n');
+        }
+
+        function GenerateCartridge(cartridgeId)
+        {
+            let otherRows = 6;
+            let analytes = $("#analytes").val();
+            let rows = $("#rows").val();
+            let cols = $("#cols").val();
+            let cartridgeCols = cartridgeId * cols;
+            let totalCols = result.cartridges * cols;
+            let totalRows = Number(rows) + otherRows;
+
+            let colHeaders = ["", "R","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","Bu"]
+            let html = [];
+
+            html.push("<div><table class=\"w3-table w3-border w3-bordered w3-centered\">");
+            let cellValue = "";   
+            
+            for(var row=0; row<totalRows; row++){
+                html.push("<tr>");
+                for(var col=0; col<=cols; col++){
+                    let classValue="ligand";
+                    cellValue = "";
+                    if(row == 0 && col > 0)
+                        cellValue = col;
+                    else if (row > 0 && col == 0)
+                    {
+                        cellValue = (row == totalRows - 1) ? "Bu" : colHeaders[row];
+                    }
+                        
+                    else if (row == 4)
+                    {
+                        let index = cartridgeCols + col - 1;
+                        if(index >= ligandNames.length)
+                            cellValue = "??";
+                        else
+                            cellValue = ligandNames[index]; 
+                            
+                        classValue = `ligand ${cellValue.toLowerCase()} header`;
+                    }                                               
+                    else if (row == totalRows-1)
+                    {
+                        cellValue = "B";                        
+                        classValue = "endcell";
+                    }
+                    else if (row >= 5){
+                        var index = (row - 5) * totalCols + cartridgeCols + col - 1;
+                        if(g_cartridges[index] != null){
+                            cellValue = g_cartridges[index].value;
+                            classValue = `ligand ${g_cartridges[index].name.toLowerCase()}`;                        
+                        }
+                    }
+                    else 
+                    {
+                        cellValue = "&nbsp;";
+                    }
+                        
+                    let cid = `c${cartridgeId}${row}${col}`;
+                    html.push(`<td class="${classValue}" id="${cid}">${cellValue}</td>`);
+                }
+                html.push("</tr>");
+            }
+            html.push("</table></div>");
+            return html.join('\n');
+        }                      
+    </script>
+    
+</head>
+<body>
+    <div id="container">    
+        <div id="data"  class="w3-container">
+            <table>
+                <tr>
+                    <td>Ligands</td>
+                    <td><input type="text" id="ligands" /></td>
+                </tr>
+                <tr>
+                    <td>Analytes/Ligand</td>
+                    <td><input type="text" id="analytes" /></td>
+                </tr>
+                <tr>
+                    <td>Rows/Cartridge</td>
+                    <td><input type="text" id="rows"/></td>
+                </tr>
+                <tr>
+                    <td>Cols/Cartridge</td>
+                    <td><input type="text" id="cols"/></td>
+                </tr>
+                <tr>
+                    <td># of Cartridges</td>
+                    <td><label type="text" id="numcartridges"/></td>
+                </tr>
+                <tr><td colspan="2"><button onclick="Generate()">Generate</button></td></tr>
+            </table>
+        </div>
+        <div id="cartridges" class="w3-container"></div>            
+    </div>   
+</body>
+</html>
