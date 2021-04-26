@@ -42,8 +42,4 @@ export class CartridgeController{
         return this.service.getCartridges(data);
     }
 
-    @Get('help')
-    getHelp(){
-        return this.service.getHelp();
-    }
 }
