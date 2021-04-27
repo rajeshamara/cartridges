@@ -170,12 +170,12 @@
                 {    
                     for(let k =0; k<result.cartridges[cart].cols; k++)  
                     {
-                        rowPerCol[counter] = result.cartridges[cart].cols;
+                        rowPerCol[counter] = result.cartridges[cart].rows;
                         counter++;
                     }              
                 }
             }
-            //console.log(`rowPerCol = ${rowPerCol}`);
+            console.log(`rowPerCol = ${rowPerCol}`);
             if(result.mode == "analytes")
                 totalCols = result.ligands[result.ligands.length-1].end + 1;
             //console.log(`Total Columns = ${totalCols}`);
