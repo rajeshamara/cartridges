@@ -2,22 +2,13 @@
 <html>
 <head>
     <title>Cartridges Demo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
     <style>
-        body{
-            font-family: "calibri";
-        }
-        input {
-            width:50px;
-        }
-        table{
-            border: 1px solid black;
-        }
-        .dataelem{
-            border: 1px solid red;
-        }
-        
+        body{font-family: "calibri";}
+        input {width:50px;}
+        table{border: 1px solid black;}
+
         .container{
             display: flex;
             padding: 2px 2px 2px 2px;  
@@ -29,13 +20,11 @@
         .cartridge{
             width:800px;
         }
-        #data{            
+        .data{            
             cursor: pointer;
             padding: 2px 2px 2px 2px;
         }
-        .result {
-            width: 90%;         
-        }
+        .result {width: 90%;  }
         .cartridges{
             width: 90%;         
             display: flex;
@@ -85,39 +74,11 @@
         .ligand.l25 {background-color: lightslategray;}        
         .ligand.l26 {background-color: lightcyan;} 
         .ligand.header{font-weight: bold; font-size: larger;}
-        
+
         .sizing{
             margin: 20px 20px 20px 20px; 
 
         }
-        .sizing.A{background-color: yellow;}
-        .sizing.B{background-color: cyan;}
-        .sizing.l1 {background-color: yellow;}
-        .sizing.l2 {background-color: turquoise;}
-        .sizing.l3 {background-color: lightgreen;}
-        .sizing.l4 {background-color: cyan;}
-        .sizing.l5 {background-color: rgb(255, 137, 137);}
-        .sizing.l6 {background-color: orange;}
-        .sizing.l7 {background-color: rgb(140, 141, 52);}
-        .sizing.l8 {background-color: rgb(109, 121, 143);}
-        .sizing.l9 {background-color: wheat;}        
-        .sizing.l10 {background-color: thistle;}        
-        .sizing.l11 {background-color: springgreen;}        
-        .sizing.l12 {background-color: SkyBlue;}        
-        .sizing.l13 {background-color:MediumOrchid;}        
-        .sizing.l14 {background-color: MediumVioletRed;}        
-        .sizing.l15 {background-color: MediumTurquoise;}        
-        .sizing.l16 {background-color: MediumSpringGreen;}        
-        .sizing.l17 {background-color: OliveDrab;}        
-        .sizing.l18 {background-color: orange;}        
-        .sizing.l19 {background-color: orchid;}        
-        .sizing.l20 {background-color: palegreen;}        
-        .sizing.l21 {background-color: palevioletred;}        
-        .sizing.l22 {background-color: paleturquoise;}        
-        .sizing.l23 {background-color: lightseagreen;}        
-        .sizing.l24 {background-color: lightsalmon;}        
-        .sizing.l25 {background-color: lightslategray;}        
-        .sizing.l26 {background-color: lightcyan;}   
         .outercontainer{
             display: flex;      
         }        
@@ -140,7 +101,7 @@
         .json{
             font-family: "Lucida Console", "Monaco", "monospace";
             font-size: large;
-        }        
+        }                
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script>
@@ -168,40 +129,8 @@
             $("#cols1").val(8);           
         }
 
-        function LoadData1(){
-            let html = [];
-
-            let cartridgeId = 0;
-            let startCol = 0;
-            let endCol = 8;
-            let rows = 8;
-            let cols = 8;
-            for(var i=1; i<3; i++)
-            {
-                html.push(`<div class="sizing l${i}"></div>`);
-                //html.push(`<div class="sizing">${GenerateCartridge(cartridgeId, startCol, endCol, rows, cols)}</div>`);
-            }
-            UIHtml = html.join("\n");
-
-            result = {
-                cartridges: [
-                    {count:2,rows:6,cols:8},
-                    {count:2,rows:4,cols:4},
-                    {count:2,rows:2,cols:2}],
-                uniqueInteractions: 136,
-                maxInteractions: 136,
-                totalCartridges: 6,
-                ligands: [
-                    {name:"L1",cols:5,start:0,end:4,analytes:30},
-                    {name:"L2",cols:5,start:5,end:9,analytes:28},
-                    {name:"L3",cols:5,start:10,end:14,analytes:28},
-                    {name:"L4",cols:6,start:15,end:20,analytes:26},
-                    {name:"L5",cols:7,start:21,end:27,analytes:24}
-                ],
-                mode: "analytes"
-            };
-            LoadUI();
-        }
+        
+        
         function Generate()
         {
             InitializeData();
@@ -212,7 +141,6 @@
             };
 
             let totalCartridges = $('#cartridgeTable tbody tr').length;
-            //console.log("totalCartridges = ", totalCartridges);
             for(let i=1; i< totalCartridges; i++)
             {
                 let count = Number($(`#count${i}`).val());
@@ -220,33 +148,20 @@
                 let cols = Number($(`#cols${i}`).val());
                 if(!(rows == NaN || cols == NaN || rows == 0 || cols == 0))
                 {
-                    //console.log(`(rows,cols)=(${rows},${cols})`)
                     input.cartridges.push({count : count, rows : rows, cols : cols});
                 }
             }            
-            //console.log(input);
-            /*
-            $.post("cartridges", input, function(data, status){
-                result = data;
-                console.log("data = ", data);
-                $("#numcartridges").text(result.totalCartridges);
-                $("#numinteractions").text(result.uniqueInteractions);
-                DisplayCartidges();
-            });
-            */
+
 
             $.post("cartridges", input) 
              .done(function (data) {
                 result = data;
-                //console.log("data = ", data);
-                //$("#output").html(`<textarea rows="4">${JSON.stringify(result, 2, ' ')}</textarea>`);               
                 $("#numcartridges").text(result.totalCartridges);
                 $("#numinteractions").text(result.uniqueInteractions);
                 $("#maxinteractions").text(result.maxInteractions);
                 DisplayCartidges();
             })
             .fail(function(jqXHR, textStatus, errorThrown) { 
-                //console.log("ErrorMessage = ", jqXHR.responseJSON.message);
                 $("#cartridges").html(`<textarea>${jqXHR.responseJSON.message.join("\n")}</textarea>`);               
             });            
         }
