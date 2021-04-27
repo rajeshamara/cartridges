@@ -18,8 +18,13 @@
             border: 1px solid red;
         }
         
-        #container{
+        .container{
             display: flex;
+            padding: 2px 2px 2px 2px;  
+            flex-wrap: wrap;  
+        }
+        .container.wrap{
+            flex-wrap: wrap;  
         }
         .cartridge{
             width:800px;
@@ -28,7 +33,10 @@
             cursor: pointer;
             padding: 2px 2px 2px 2px;
         }
-        #cartridges{
+        .result {
+            width: 90%;         
+        }
+        .cartridges{
             width: 90%;         
             display: flex;
             flex-wrap: wrap;      
@@ -78,13 +86,66 @@
         .ligand.l26 {background-color: lightcyan;} 
         .ligand.header{font-weight: bold; font-size: larger;}
         
-        .sizing{margin: 20px 20px 20px 20px; }
+        .sizing{
+            margin: 20px 20px 20px 20px; 
+
+        }
         .sizing.A{background-color: yellow;}
         .sizing.B{background-color: cyan;}
+        .sizing.l1 {background-color: yellow;}
+        .sizing.l2 {background-color: turquoise;}
+        .sizing.l3 {background-color: lightgreen;}
+        .sizing.l4 {background-color: cyan;}
+        .sizing.l5 {background-color: rgb(255, 137, 137);}
+        .sizing.l6 {background-color: orange;}
+        .sizing.l7 {background-color: rgb(140, 141, 52);}
+        .sizing.l8 {background-color: rgb(109, 121, 143);}
+        .sizing.l9 {background-color: wheat;}        
+        .sizing.l10 {background-color: thistle;}        
+        .sizing.l11 {background-color: springgreen;}        
+        .sizing.l12 {background-color: SkyBlue;}        
+        .sizing.l13 {background-color:MediumOrchid;}        
+        .sizing.l14 {background-color: MediumVioletRed;}        
+        .sizing.l15 {background-color: MediumTurquoise;}        
+        .sizing.l16 {background-color: MediumSpringGreen;}        
+        .sizing.l17 {background-color: OliveDrab;}        
+        .sizing.l18 {background-color: orange;}        
+        .sizing.l19 {background-color: orchid;}        
+        .sizing.l20 {background-color: palegreen;}        
+        .sizing.l21 {background-color: palevioletred;}        
+        .sizing.l22 {background-color: paleturquoise;}        
+        .sizing.l23 {background-color: lightseagreen;}        
+        .sizing.l24 {background-color: lightsalmon;}        
+        .sizing.l25 {background-color: lightslategray;}        
+        .sizing.l26 {background-color: lightcyan;}   
+        .outercontainer{
+            display: flex;      
+        }        
+        .container{
+            display: flex;
+            padding: 2px 2px 2px 2px;  
+            flex-wrap: wrap;        
+        }
+        .menu{
+            text-decoration: none;
+        }
+        a:hover{
+            text-decoration: underline;
+            color: red;
+        }
+        .menu.active{
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        .json{
+            font-family: "Lucida Console", "Monaco", "monospace";
+            font-size: large;
+        }        
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script>
         let result = {};
+        let UIHtml = "";
         let data = {value:0, name:""};
         let g_cartridges = [];
         let ligandNames = [];
@@ -107,6 +168,40 @@
             $("#cols1").val(8);           
         }
 
+        function LoadData1(){
+            let html = [];
+
+            let cartridgeId = 0;
+            let startCol = 0;
+            let endCol = 8;
+            let rows = 8;
+            let cols = 8;
+            for(var i=1; i<3; i++)
+            {
+                html.push(`<div class="sizing l${i}"></div>`);
+                //html.push(`<div class="sizing">${GenerateCartridge(cartridgeId, startCol, endCol, rows, cols)}</div>`);
+            }
+            UIHtml = html.join("\n");
+
+            result = {
+                cartridges: [
+                    {count:2,rows:6,cols:8},
+                    {count:2,rows:4,cols:4},
+                    {count:2,rows:2,cols:2}],
+                uniqueInteractions: 136,
+                maxInteractions: 136,
+                totalCartridges: 6,
+                ligands: [
+                    {name:"L1",cols:5,start:0,end:4,analytes:30},
+                    {name:"L2",cols:5,start:5,end:9,analytes:28},
+                    {name:"L3",cols:5,start:10,end:14,analytes:28},
+                    {name:"L4",cols:6,start:15,end:20,analytes:26},
+                    {name:"L5",cols:7,start:21,end:27,analytes:24}
+                ],
+                mode: "analytes"
+            };
+            LoadUI();
+        }
         function Generate()
         {
             InitializeData();
@@ -144,7 +239,7 @@
              .done(function (data) {
                 result = data;
                 //console.log("data = ", data);
-                $("#output").html(`<textarea rows="4">${JSON.stringify(result, 2, ' ')}</textarea>`);               
+                //$("#output").html(`<textarea rows="4">${JSON.stringify(result, 2, ' ')}</textarea>`);               
                 $("#numcartridges").text(result.totalCartridges);
                 $("#numinteractions").text(result.uniqueInteractions);
                 $("#maxinteractions").text(result.maxInteractions);
@@ -237,6 +332,7 @@
             let html  = [];
             html.push(GenerateBaseTable());
             //console.log(html);
+            UIHtml = html;
             $("#cartridges").html(html);
         }
 
@@ -343,56 +439,84 @@
             html.push("</tr>");
             $('#cartridgeTable').append(html.join());
         }       
+
+        function RemoveActive(){
+            $(".menu").removeClass("active");
+        }
+        function MakeMenuActive(id)
+        {
+            RemoveActive();
+            $(`#${id}`).toggleClass("active");
+        }
+        function LoadUI()
+        {
+            console.log("UIHtml = ", UIHtml);
+            MakeMenuActive("m1");
+            $("#cartridges").html(UIHtml);
+        }
+        function LoadJSON()
+        {
+            MakeMenuActive("m2");
+            $("#cartridges").html(`<textarea class="json" cols="1250">${JSON.stringify(result, null, 2)}</textarea>`);
+        }        
     </script>
     
 </head>
 <body>
-    <div id="container">    
-        <div id="data"  class="w3-container">
-            <table>
-                <tr>
-                    <td>Ligands</td>
-                    <td><input type="text" id="ligands" /></td>
-                </tr>
-                <tr>
-                    <td>Analytes/Ligand</td>
-                    <td><input type="text" id="analytes" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <label class="largeboldtext">Cartridge Information</label>
-                        <table id="cartridgeTable">
-                            <tr>
-                                <th>#</th>
-                                <th>Rows</th>
-                                <th>Cols</th>
-                            </tr>
-                            <tr>
-                                <td><input type="text" id="count1" /></td>
-                                <td><input type="text" id="rows1" /></td>
-                                <td><input type="text" id="cols1" /></td>
-                            </tr>
-                        </table>
-                        <button onclick="AddRow()">Add Cartridge</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="largeboldtext"># of Cartridges</td>
-                    <td><label class="largeboldtext" type="text" id="numcartridges"/></td>
-                </tr>
-                <tr>
-                    <td># of Interactions</td>
-                    <td><label type="text" id="numinteractions"/></td>
-                </tr>
-                <tr>
-                    <td>Max Interactions</td>
-                    <td><label type="text" id="maxinteractions"/></td>
-                </tr>
-                <tr><td colspan="2"><button onclick="Generate()">Generate</button></td></tr>
-            </table>
-            <div id="output"></div>
-        </div>           
-        <div id="cartridges" class="w3-container"></div>            
+    <!-- -->
+    <div class="outercontainer"> 
+        <div>
+            <div id="data">
+                <table>
+                    <tr>
+                        <td>Ligands</td>
+                        <td><input type="text" id="ligands" /></td>
+                    </tr>
+                    <tr>
+                        <td>Analytes/Ligand</td>
+                        <td><input type="text" id="analytes" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <label class="largeboldtext">Cartridge Information</label>
+                            <table id="cartridgeTable">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Rows</th>
+                                    <th>Cols</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" id="count1" /></td>
+                                    <td><input type="text" id="rows1" /></td>
+                                    <td><input type="text" id="cols1" /></td>
+                                </tr>
+                            </table>
+                            <button onclick="AddRow()">Add Cartridge</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="largeboldtext"># of Cartridges</td>
+                        <td><label class="largeboldtext" type="text" id="numcartridges"/></td>
+                    </tr>
+                    <tr>
+                        <td># of Interactions</td>
+                        <td><label type="text" id="numinteractions"/></td>
+                    </tr>
+                    <tr>
+                        <td>Max Interactions</td>
+                        <td><label type="text" id="maxinteractions"/></td>
+                    </tr>
+                    <tr><td colspan="2"><button onclick="Generate()">Generate</button></td></tr>
+                </table>
+            </div>       
+        </div>   
+        <div>
+            <div class="w3-bar w3-white">
+                <a id="m1" href="#" class="w3-bar-item menu active" onclick="LoadUI()">UI</a>
+                <a id="m2" href="#" class="w3-bar-item menu" onclick="LoadJSON()">JSON</a>
+            </div>
+            <div id="cartridges" class="container"></div>       
+        </div>                                    
     </div>   
 </body>
 </html>
