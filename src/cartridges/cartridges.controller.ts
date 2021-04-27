@@ -21,7 +21,7 @@ export class CartridgeController{
                 errorMsgs.push(`${props[i]} property is missing`);
         if(errorMsgs.length > 0)
             throw new BadRequestException(errorMsgs);
-        console.log("data1  = ", data1.query);
+        //console.log("data1  = ", data1.query);
         // validate input params
 
         let data = {
@@ -30,7 +30,7 @@ export class CartridgeController{
             rows : data1.query["rows"],
             cols : data1.query["cols"]
         };
-        console.log("data1  = ", data);
+        //console.log("data1  = ", data);
         return this.service.getCartridges(data1.query);
     }
 
@@ -38,7 +38,7 @@ export class CartridgeController{
     getProducts(
         @Body() data : input
     ){
-        console.log("Input  = ", data);
+        //console.log("Input  = ", data);
         return this.service.getCartridges(data);
     }
 

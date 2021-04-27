@@ -1,6 +1,11 @@
+import { Cartridge } from "./cartridge.model";
 import { Ligand } from "./ligand.model";
 
 export class Result{
-    cartridges : number;
+    totalCartridges : number;
+    uniqueInteractions : number;
+    maxInteractions : number;
+    cartridges : Cartridge[];
     ligands : Ligand[];
+    mode : string;
 }

@@ -3,4 +3,5 @@ export class Ligand{
     cols : number;
     start : number;
     end : number;
+    analytes : number;
 }
